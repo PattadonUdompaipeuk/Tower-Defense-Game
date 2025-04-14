@@ -6,9 +6,16 @@ class Tower(pg.sprite.Sprite):
         self.tile_x = tile_x
         self.tile_y = tile_y
 
-        self.x = (self.tile_x + 4.125) * (Config.get("TILE_SIZE"))
-        self.y = (self.tile_y - 1.5) * (Config.get("TILE_SIZE"))
+        self.x = (self.tile_x) * (Config.get("TILE_SIZE"))
+        self.y = (self.tile_y - 1) * (Config.get("TILE_SIZE"))
 
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
+
+
+    def draw(self, screen):
+        if self.selected:
+            screen.blit(self.range_image, self.range_rect)
+        screen.blit(self.image, self.rect)
+

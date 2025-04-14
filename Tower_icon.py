@@ -1,8 +1,6 @@
-class TowerIcon:
-    def __init__(self, image, x,y):
-        self.image = image
-        self.rect = image.get_rect()
-        self.rect.center = (x, y)
+from spritesheet_data import SpriteSheet_data
+class TowerIcon(SpriteSheet_data):
+    def __init__(self, spritesheet, row, col, width, height):
+        super().__init__(spritesheet,row,col,width,height)
 
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
+

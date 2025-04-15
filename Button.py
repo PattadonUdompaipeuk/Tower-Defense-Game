@@ -23,8 +23,6 @@ class Button:
             self.clicked = False
 
         surface.blit(self.image, self.rect)
-        # pg.draw.rect(surface, self.button_color, self.rect)
-        # surface.blit(self.text, self.text_rect)
 
         return action
 

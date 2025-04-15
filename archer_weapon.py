@@ -1,8 +1,10 @@
 import pygame as pg
 from config import Config
+import math
 class ArcherWeapon(pg.sprite.Sprite):
     def __init__(self, tile_x, tile_y):
-        super().__init__()
+        pg.sprite.Sprite().__init__()
+
         pg.init()
         self.tile_x = tile_x
         self.tile_y = tile_y
@@ -15,6 +17,9 @@ class ArcherWeapon(pg.sprite.Sprite):
         self.frame = []
         self.load_frames_from_spritesheet(6, 1)
         self.current_frame = 0
+        self.angle = 90
+        self.original_image = self.frame[self.current_frame]
+        self.image = pg.transform.rotate(self.original_image, self.angle)
         self.image = self.frame[self.current_frame]
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
@@ -44,4 +49,11 @@ class ArcherWeapon(pg.sprite.Sprite):
             self.animation_timer = 0
             self.current_frame = (self.current_frame + 1) % len(self.frame)
             new_image = self.frame[self.current_frame]
-            self.image = new_image
+            self.original_image = new_image
+
+    def reset_animation(self):
+        self.current_frame = 0
+        self.original_image = self.frame[self.current_frame]
+
+
+

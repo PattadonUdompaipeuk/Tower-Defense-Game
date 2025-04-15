@@ -23,7 +23,7 @@ class MagicWeapon(pg.sprite.Sprite):
         self.rect.center = (self.x, self.y)
 
         self.animation_timer = 0
-        self.animation_speed = 0.03
+        self.animation_speed = 0.015
 
     def load_frames_from_spritesheet(self, num_width, num_height):
         sheet_width, sheet_height = self.weapon_image.get_size()
@@ -55,4 +55,8 @@ class MagicWeapon(pg.sprite.Sprite):
             self.current_frame = (self.current_frame + 1) % len(self.frame)
             new_image = self.frame[self.current_frame]
             self.image = new_image
+
+    def reset_animation(self):
+        self.current_frame = 0
+        self.image = self.frame[self.current_frame]
 

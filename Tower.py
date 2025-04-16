@@ -1,6 +1,7 @@
 import pygame as pg
 from config import Config
 import math
+from tower_data import TowerData
 class Tower(pg.sprite.Sprite):
     def __init__(self, image, tile_x, tile_y):
         super().__init__()
@@ -30,8 +31,6 @@ class Tower(pg.sprite.Sprite):
         self.selected = False
 
     def update(self, dt, enemy_group):
-        # if len(enemy_group) <= 0:
-        #     self.target = None
         if self.target and self.target not in enemy_group:
             self.target = None
             self.weapon.reset_animation()
@@ -57,6 +56,7 @@ class Tower(pg.sprite.Sprite):
             clipped_surface.blit(self.range_image, self.range_rect)
             cropped = clipped_surface.subsurface((0, 0, Config.get("WIN_W"), screen.get_height()))
             screen.blit(cropped, (0, 0))
+
         screen.blit(self.image, self.rect)
         screen.blit(self.weapon.image, self.weapon.rect)
 

@@ -2,6 +2,7 @@ from Tower import Tower
 import pygame as pg
 from magic_weapon import MagicWeapon
 import math
+from tower_data import TowerData
 class MagicTower(Tower):
     def __init__(self, tile_x, tile_y):
         pg.init()
@@ -9,10 +10,12 @@ class MagicTower(Tower):
         self.icon_frame = []
         self.load_frames_from_spritesheet(3,1)
         self.icon_index = 0
-        image = self.icon_frame[self.icon_index]
-        super().__init__(image, tile_x, tile_y)
+        self.image = self.icon_frame[self.icon_index]
+        super().__init__(self.image, tile_x, tile_y)
 
-        self.range = 140
+        self.level = 1
+        self.range = TowerData.Magic_Upgrade[self.level - 1].get("range")
+
         self.range_image = pg.Surface((self.range * 2, self.range * 2))
         self.range_image.fill((0, 0, 0))
         self.range_image.set_colorkey((0, 0, 0))
@@ -34,6 +37,20 @@ class MagicTower(Tower):
             ), (frame_width, frame_height))
 
             self.icon_frame.append(frame)
+
+    def upgrade_level(self):
+        self.level += 1
+        self.icon_index += 1
+        self.image = self.icon_frame[self.icon_index]
+        self.range = TowerData.Magic_Upgrade[self.level - 1].get("range")
+
+        self.range_image = pg.Surface((self.range * 2, self.range * 2))
+        self.range_image.fill((0, 0, 0))
+        self.range_image.set_colorkey((0, 0, 0))
+        pg.draw.circle(self.range_image, "gray100", (self.range, self.range), self.range)
+        self.range_image.set_alpha(100)
+        self.range_rect = self.range_image.get_rect()
+        self.range_rect.center = self.rect.center
 
 
 

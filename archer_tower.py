@@ -3,6 +3,7 @@ import pygame as pg
 import math
 from archer_weapon import ArcherWeapon
 from config import Config
+from tower_data import TowerData
 class ArcherTower(Tower):
     def __init__(self, tile_x, tile_y):
         pg.init()
@@ -10,10 +11,12 @@ class ArcherTower(Tower):
         self.frame = []
         self.load_frames_from_spritesheet(3,1)
         self.current_frame = 0
-        image = self.frame[0]
+        self.image = self.frame[self.current_frame]
+        super().__init__(self.image, tile_x, tile_y)
 
-        super().__init__(image, tile_x, tile_y)
-        self.range = 160
+        self.level = 1
+        self.range = TowerData.Archer_Upgrade[self.level - 1].get("range")
+
         self.range_image = pg.Surface((self.range * 2, self.range * 2))
         self.range_image.fill((0, 0, 0))
         self.range_image.set_colorkey((0, 0, 0))
@@ -21,6 +24,7 @@ class ArcherTower(Tower):
         self.range_image.set_alpha(100)
         self.range_rect = self.range_image.get_rect()
         self.range_rect.center = self.rect.center
+
 
         self.weapon = ArcherWeapon(tile_x, tile_y)
 
@@ -48,6 +52,20 @@ class ArcherTower(Tower):
                 self.weapon.angle = math.degrees(math.atan2(-y_dist, x_dist))
             else:
                 self.weapon.reset_animation()
+
+    def upgrade_level(self):
+        self.level += 1
+        self.current_frame += 1
+        self.image = self.frame[self.current_frame]
+        self.range = TowerData.Archer_Upgrade[self.level - 1].get("range")
+
+        self.range_image = pg.Surface((self.range * 2, self.range * 2))
+        self.range_image.fill((0, 0, 0))
+        self.range_image.set_colorkey((0, 0, 0))
+        pg.draw.circle(self.range_image, "gray100", (self.range, self.range), self.range)
+        self.range_image.set_alpha(100)
+        self.range_rect = self.range_image.get_rect()
+        self.range_rect.center = self.rect.center
 
     def draw(self, screen):
         self.weapon.image = pg.transform.rotate(self.weapon.original_image, self.weapon.angle - 90)

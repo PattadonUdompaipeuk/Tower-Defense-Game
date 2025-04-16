@@ -47,7 +47,6 @@ class Enemy(pg.sprite.Sprite):
         elif distance != 0:
             self.pos += self.movement.normalize() * self.speed
             self.target_waypoint += 1
-        print(distance)
 
         self.rect.center = self.pos
 

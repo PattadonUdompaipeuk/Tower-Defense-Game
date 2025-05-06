@@ -29,6 +29,8 @@ class MagicWeapon(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
 
+        self.damage = TowerData.Magic_Upgrade[self.level - 1].get("damage")
+
         self.fire_rate_timer = 0
         self.fire_rate = TowerData.Magic_Upgrade[self.level - 1].get("fire_rate")
 
@@ -40,7 +42,6 @@ class MagicWeapon(pg.sprite.Sprite):
         sheet_width, sheet_height = self.weapon_image.get_size()
         frame_width = sheet_width // num_width
         frame_height = sheet_height // num_height
-        print(frame_width, frame_height)
 
         for i in range(8):
             frame = pg.transform.smoothscale(self.weapon_image.subsurface(
@@ -58,6 +59,7 @@ class MagicWeapon(pg.sprite.Sprite):
 
     def upgrade_level(self):
         self.level += 1
+        self.current_frame = 0
         self.set_y_center += 0.5
         self.y = (self.tile_y - self.set_y_center) * (Config.get("TILE_SIZE"))
         self.weapon_image = self.weapon_spritesheets[self.level - 1]
@@ -70,6 +72,8 @@ class MagicWeapon(pg.sprite.Sprite):
         self.image = self.frame[self.current_frame]
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
+
+        self.damage = TowerData.Magic_Upgrade[self.level - 1].get("damage")
 
         self.fire_rate_timer = 0
         self.fire_rate = TowerData.Magic_Upgrade[self.level - 1].get("fire_rate")

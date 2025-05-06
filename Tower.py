@@ -2,6 +2,8 @@ import pygame as pg
 from config import Config
 import math
 from tower_data import TowerData
+from Button import Button
+from spritesheet_data import SpriteSheet_data
 class Tower(pg.sprite.Sprite):
     def __init__(self, image, tile_x, tile_y):
         super().__init__()
@@ -16,6 +18,8 @@ class Tower(pg.sprite.Sprite):
         self.rect.center = (self.x, self.y)
 
         self.target = None
+        self.level = 1
+        self.upgrade_cost = 0
 
         self.range = 0
         self.range_image = pg.Surface((self.range * 2, self.range * 2))
@@ -30,25 +34,20 @@ class Tower(pg.sprite.Sprite):
 
         self.selected = False
 
-    def update(self, dt, enemy_group):
+    def upgrade_level(self):
+        pass
+
+    def update(self, dt, enemy_group, screen):
         if self.target and self.target not in enemy_group:
             self.target = None
             self.weapon.reset_animation()
         if self.target:
             self.weapon.update(dt)
         self.pick_target(enemy_group)
+        self.draw(screen)
 
     def pick_target(self, enemy_group):
-        x_dist = 0
-        y_dist = 0
-        for enemy in enemy_group:
-            x_dist = enemy.pos[0] - self.x
-            y_dist = enemy.pos[1] - self.y
-            dist = math.sqrt(x_dist ** 2 + y_dist ** 2)
-            if dist < self.range:
-                self.target = enemy
-            else:
-                self.weapon.reset_animation()
+        pass
 
     def draw(self, screen):
         if self.selected:

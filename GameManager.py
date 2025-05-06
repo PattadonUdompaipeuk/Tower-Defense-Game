@@ -1,10 +1,9 @@
 import pygame as pg
 from config import Config
-from fire_bug import Firebug
-from leaf_bug import Leafbug
 from map import Map
 import json
 from Tower import Tower
+from Enemy import Enemy
 from Button import Button
 from spritesheet_data import SpriteSheet_data
 from magic_tower import MagicTower
@@ -12,6 +11,8 @@ from archer_tower import ArcherTower
 from magic_weapon import MagicWeapon
 from archer_weapon import ArcherWeapon
 from unit_manager import UnitManager
+from tower_icon import TowerIcon
+from ui import UI
 
 class GameManager:
     def __init__(self):
@@ -21,10 +22,12 @@ class GameManager:
         #######################################################
         # Load image section
         #######################################################
-        self.tower_sprite = pg.image.load(
-            "materials/tower/Foozle_2DS0019_Spire_TowerPack_3/Towers bases/PNGs/Tower 05.png")
-        self.tower_sprite2 = pg.image.load(
-            "materials/tower/Foozle_2DS0019_Spire_TowerPack_3/Towers bases/PNGs/Tower 06.png")
+        self.enemy_image = {
+            "Fire_bug": pg.image.load("materials/monster/Foozle_2DC0028_Spire_EnemyPack_2_Ground/Ground/Spritesheets/"
+                                      "Firebug.png").convert_alpha(),
+            "Leaf_bug": pg.image.load("materials/monster/Foozle_2DC0028_Spire_EnemyPack_2_Ground/Ground/Spritesheets/"
+                                      "Leafbug.png").convert_alpha()
+        }
         self.bg = pg.image.load("materials/TD_map/map1.png")
         self.bg_image = pg.transform.scale(self.bg, (Config.get("WIN_W"), Config.get("WIN_H")))
         self.button_image = pg.image.load("materials/tower/button UI.png")
@@ -40,15 +43,22 @@ class GameManager:
         pg.display.set_caption("Tower Defense Game")
         self.map = Map(map_data, self.bg_image)
         self.map.process_data()
+        self.map.process_enemies()
+        self.waiting_for_next_wave = False
+        self.wave_wait_start = 0
+        self.last_wave = pg.time.get_ticks()
+
+        self.big_font = pg.font.Font("Stacked pixel.ttf", 48)
+        self.font1 = pg.font.Font("Stacked pixel.ttf", 24)
+        # self.font2 = pg.font.SysFont("Serif", 24, bold=True)
 
         # Enemy part
         self.enemy_group = pg.sprite.Group()
-        self.fire_bug = Firebug(self.map.waypoints)
-        self.leaf_bug = Leafbug(self.map.waypoints)
-        self.enemy_group.add(self.fire_bug)
-
+        self.last_spawn = pg.time.get_ticks()
 
         # Tower part
+        self.magic_tower = MagicTower(0, 0)
+        self.archer_tower = ArcherTower(0, 0)
         self.tower_group = pg.sprite.Group()
         self.tower_history = []
         self.placing_magic = False
@@ -56,23 +66,26 @@ class GameManager:
         self.selected_tower = None
 
         # MagicTower buy button and cancel button
-        self.tower_icon = SpriteSheet_data(self.tower_sprite, 3,0,64,128)
-        self.tower_icon.load_frames_from_spritesheet(3, 1)
-        self.tower1_buy = Button(self.tower_icon.frame[0], Config.get("WIN_W") + (Config.get("SIDE_PANEL")/4), Config.get("WIN_H")/5, True)
+        self.magic_icon = TowerIcon(self.magic_tower, (Config.get("WIN_W") + Config.get("SIDE_PANEL")/4, Config.get("WIN_H")/5),
+                                    (Config.get("WIN_W") + Config.get("SIDE_PANEL")/4, Config.get("WIN_H")/5 - 16))
+        self.magic_buy_button = Button(self.magic_tower.image, Config.get("WIN_W") + (Config.get("SIDE_PANEL") / 4),
+                                 Config.get("WIN_H") / 5,True)
         self.cancel_button = Button(self.cancel_img.frame[4], Config.get("WIN_W") + (Config.get("SIDE_PANEL")/4),
                                     (Config.get("WIN_H")/5) + 100, True)
         self.upgrade_button = Button(self.upgrade_img.frame[4], Config.get("WIN_W") + (Config.get("SIDE_PANEL")/4),
                                       (Config.get("WIN_H") / 5) + 100, True)
 
         # ArcherTower buy button and cancel button
-        self.tower_icon2 = SpriteSheet_data(self.tower_sprite2, 3, 0, 64, 128)
-        self.tower_icon2.load_frames_from_spritesheet(3, 1)
-        self.tower2_buy = Button(self.tower_icon2.frame[0], Config.get("WIN_W") + (Config.get("SIDE_PANEL")/2), Config.get("WIN_H")/5,
-                                 True)
+        self.archer_icon = TowerIcon(self.archer_tower, (Config.get("WIN_W") + Config.get("SIDE_PANEL") / 2, Config.get("WIN_H") / 5),
+                                     (Config.get("WIN_W") + Config.get("SIDE_PANEL") / 2, Config.get("WIN_H") / 5 - 10))
+        self.archer_buy_button = Button(self.archer_tower.image, Config.get("WIN_W") + (Config.get("SIDE_PANEL") / 2),
+                                 Config.get("WIN_H") / 5,True)
         self.cancel_button2 = Button(self.cancel_img.frame[4], Config.get("WIN_W") + (Config.get("SIDE_PANEL")/2),
                                     (Config.get("WIN_H")/5) + 100, True)
         self.upgrade_button2 = Button(self.upgrade_img.frame[4], Config.get("WIN_W") + (Config.get("SIDE_PANEL")/2),
                                      (Config.get("WIN_H")/5) + 100, True)
+
+        self.ui = UI(self.map, self.font1, self.tower_group, self.tower_history)
 
         self.running = True
         self.clock = pg.time.Clock()
@@ -91,12 +104,15 @@ class GameManager:
 
                 if (mouse_tile_x, mouse_tile_y) not in self.tower_history:
                     self.tower_history.append((mouse_tile_x, mouse_tile_y))
+                    print(self.tower_history)
                     if self.placing_magic:
                         self.magic_tower = MagicTower(mouse_tile_x, mouse_tile_y)
                         self.tower_group.add(self.magic_tower)
+                        self.map.money -= self.magic_tower.buy_cost
                     elif self.placing_archer:
                         self.archer_tower = ArcherTower(mouse_tile_x, mouse_tile_y)
                         self.tower_group.add(self.archer_tower)
+                        self.map.money -= self.archer_tower.buy_cost
                     print(self.tower_group)
 
     # to select tower on map
@@ -120,52 +136,68 @@ class GameManager:
             self.unit_bg.draw(self.screen)
 
             # update section
-            self.enemy_group.update(self.clock.tick(Config.get("FPS")) / 1000)
-            self.tower_group.update(self.clock.tick(Config.get("FPS")) / 1000, self.enemy_group)
+            self.enemy_group.update(self.clock.tick(Config.get("FPS")) / 1000, self.screen, self.map)
+            self.tower_group.update(self.clock.tick(Config.get("FPS")) / 1000, self.enemy_group, self.screen)
 
             # check that tower is selected or not
             if self.selected_tower:
                 self.selected_tower.selected = True
+                if self.selected_tower in self.tower_group:
+                    self.ui.draw_tower_ui(self.selected_tower, self.screen)
 
             # draw section
-            for tower in self.tower_group:
-                tower.draw(self.screen)
-            self.enemy_group.draw(self.screen)
+            self.ui.draw_text(f"Money : {self.map.money}$", self.big_font, Config.get("BLACK"), 800 - 300, 0, self.screen)
+            self.ui.draw_text(f"HP : {self.map.hp}", self.big_font, Config.get("BLACK"), 800 - 300, 50, self.screen)
 
-            if self.tower1_buy.draw(self.screen):
+            if not self.waiting_for_next_wave:
+                if pg.time.get_ticks() - self.last_spawn > Config.get("SPAWN_DELAY"):
+                    if self.map.spawned_enemies < len(self.map.enemy_list):
+                        enemy_type = self.map.enemy_list[self.map.spawned_enemies]
+                        self.map.random_way()
+                        self.map.process_data()
+                        self.enemy = Enemy(enemy_type, self.map.waypoints, self.enemy_image)
+                        self.enemy_group.add(self.enemy)
+                        self.map.spawned_enemies += 1
+                        self.last_spawn = pg.time.get_ticks()
+
+                if self.map.spawned_enemies == len(self.map.enemy_list) and len(self.enemy_group) == 0:
+                    self.waiting_for_next_wave = True
+                    self.wave_wait_start = pg.time.get_ticks()
+
+            elif self.waiting_for_next_wave:
+                if pg.time.get_ticks() - self.wave_wait_start >= Config.get("WAVE_DELAY"):
+                    self.waiting_for_next_wave = False
+                    self.map.next_wave()
+
+            if self.magic_buy_button.draw(self.screen) and self.map.money >= self.magic_tower.buy_cost:
                 self.placing_magic = True
                 self.placing_archer = False
-            if self.tower2_buy.draw(self.screen):
+            if self.archer_buy_button.draw(self.screen) and self.map.money >= self.archer_tower.buy_cost:
                 self.placing_archer = True
                 self.placing_magic = False
-            if isinstance(self.selected_tower, MagicTower):
-                if self.selected_tower.level < Config.get("MAX_LEVEL"):
-                    if self.upgrade_button.draw(self.screen):
-                        self.selected_tower.upgrade_level()
-                        self.selected_tower.weapon.upgrade_level()
-            if isinstance(self.selected_tower, ArcherTower):
-                if self.selected_tower.level < Config.get("MAX_LEVEL"):
-                    if self.upgrade_button2.draw(self.screen):
-                        self.selected_tower.upgrade_level()
-                        self.selected_tower.weapon.upgrade_level()
 
             if self.placing_magic:
-                cursor = self.tower_icon.frame[0].get_rect()
-                cursor_pos = pg.mouse.get_pos()
-                cursor.center = cursor_pos
-                if cursor[0] <= Config.get("WIN_W"):
-                    self.screen.blit(self.tower_icon.frame[0], cursor)
+                if self.map.money < self.magic_tower.buy_cost:
+                    self.placing_magic = False
                 if self.cancel_button.draw(self.screen):
                     self.placing_magic = False
+            else:
+                self.ui.draw_text(f"{self.magic_tower.buy_cost}$", self.font1, Config.get("BLACK"),
+                                  self.magic_buy_button.rect.centerx - 25, self.magic_buy_button.rect.centery + 80,
+                                  self.screen)
 
             if self.placing_archer:
-                cursor = self.tower_icon2.frame[0].get_rect()
-                cursor_pos = pg.mouse.get_pos()
-                cursor.center = cursor_pos
-                if cursor[0] <= Config.get("WIN_W"):
-                    self.screen.blit(self.tower_icon2.frame[0], cursor)
+                if self.map.money < self.archer_tower.buy_cost:
+                    self.placing_archer = False
                 if self.cancel_button2.draw(self.screen):
                     self.placing_archer = False
+            else:
+                self.ui.draw_text(f"{self.archer_tower.buy_cost}$", self.font1, Config.get("BLACK"),
+                                  self.archer_buy_button.rect.centerx - 25, self.archer_buy_button.rect.centery + 80,
+                                  self.screen)
+
+            self.magic_icon.draw(self.screen)
+            self.archer_icon.draw(self.screen)
 
             # check event section
             for ev in pg.event.get():
@@ -177,7 +209,9 @@ class GameManager:
                     if mouse_pos[0] < Config.get("WIN_W") and mouse_pos[1] < Config.get("WIN_H"):
                         self.selected_tower = None
                         self.clear_selection()
-                        if self.placing_magic or self.placing_archer:
+                        if self.placing_magic and self.map.money >= self.magic_tower.buy_cost:
+                            self.create_tower(mouse_pos)
+                        elif self.placing_archer and self.map.money >= self.archer_tower.buy_cost:
                             self.create_tower(mouse_pos)
                         else:
                             self.select_tower(mouse_pos)

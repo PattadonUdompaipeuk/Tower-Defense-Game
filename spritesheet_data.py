@@ -12,9 +12,10 @@ class SpriteSheet_data:
         sheet_width, sheet_height = self.sheet.get_size()
         frame_width = sheet_width // num_width
         frame_height = sheet_height // num_height
+        print(frame_width, frame_height)
 
         for i in range(self.row):
-            frame = pg.transform.smoothscale(self.sheet.subsurface(
+            frame = pg.transform.scale(self.sheet.subsurface(
                 (i * frame_width, frame_height * self.col, frame_width, frame_height)
             ), (self.width, self.height))
 

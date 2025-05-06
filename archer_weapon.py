@@ -23,15 +23,19 @@ class ArcherWeapon(pg.sprite.Sprite):
             self.weapon_spritesheets.append(weapon_sheet)
 
         self.weapon_image = self.weapon_spritesheets[self.level - 1]
+        self.frame_width = 0
+        self.frame_height = 0
 
         self.load_frames_from_spritesheet(6, 1)
         self.current_frame = 0
         self.angle = 90
         self.original_image = self.frame[self.current_frame]
         self.image = pg.transform.rotate(self.original_image, self.angle)
-        self.image = self.frame[self.current_frame]
+
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
+
+        self.damage = TowerData.Archer_Upgrade[self.level - 1].get("damage")
 
         self.fire_rate_timer = 0
         self.fire_rate = TowerData.Archer_Upgrade[self.level - 1].get("fire_rate")
@@ -42,14 +46,13 @@ class ArcherWeapon(pg.sprite.Sprite):
 
     def load_frames_from_spritesheet(self, num_width, num_height):
         sheet_width, sheet_height = self.weapon_image.get_size()
-        frame_width = sheet_width // num_width
-        frame_height = sheet_height // num_height
-        print(frame_width, frame_height)
+        self.frame_width = sheet_width // num_width
+        self.frame_height = sheet_height // num_height
 
         for i in range(6):
             frame = pg.transform.smoothscale(self.weapon_image.subsurface(
-                (i * frame_width, frame_height * 0, frame_width, frame_height)
-            ), (frame_width, frame_height))
+                (i * self.frame_width, self.frame_height * 0, self.frame_width, self.frame_height)
+            ), (self.frame_width, self.frame_height))
 
             self.frame.append(frame)
 
@@ -65,7 +68,7 @@ class ArcherWeapon(pg.sprite.Sprite):
         self.angle = 90
         self.original_image = self.frame[self.current_frame]
         self.image = pg.transform.rotate(self.original_image, self.angle)
-        self.image = self.frame[self.current_frame]
+
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
 

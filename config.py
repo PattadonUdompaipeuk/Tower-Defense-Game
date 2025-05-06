@@ -1,3 +1,4 @@
+import pygame as pg
 class Config:
     row, col = 50, 50
 
@@ -15,7 +16,14 @@ class Config:
         'PLACEABLE': [((10,11,12,13), (8,9,10,11)), ((20,21,22,23), (10,11,12,13)),((33,34,35,36), (19,20,21,22)),
                       ((42,43,44,45), (19,20,21,22)), ((2,3,4,5), (38,39,40,41)),((12,13,14,15), (29,30,31,32)),
                       ((23,24,25,26), (29,30,31,32)), ((33,34,35,36), (32,33,34,35)), ((43,44,45,46),(32,33,34,35))],
-        'MAX_LEVEL': 3
+        'MAX_LEVEL': 3,
+        'BUTTON': pg.image.load("materials/tower/button UI.png"),
+        'SPAWN_DELAY': 1500,
+        'WAVE_DELAY': 10000,
+        'BASE_HP': 100,
+        'MONEY': 800,
+        'SET_MAGIC_WEAPON': [16, 24, 32],
+        'SET_ARCHER_WEAPON': [10, 15, 25]
     }
 
     @classmethod

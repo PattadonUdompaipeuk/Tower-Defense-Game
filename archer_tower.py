@@ -7,6 +7,7 @@ from tower_data import TowerData
 class ArcherTower(Tower):
     def __init__(self, tile_x, tile_y):
         pg.init()
+        self.name = "Archer Tower"
         self.archer_tower = pg.image.load("materials/tower/Foozle_2DS0019_Spire_TowerPack_3/Towers bases/PNGs/Tower 06.png")
         self.frame = []
         self.load_frames_from_spritesheet(3,1)
@@ -16,6 +17,9 @@ class ArcherTower(Tower):
 
         self.level = 1
         self.range = TowerData.Archer_Upgrade[self.level - 1].get("range")
+        self.buy_cost = 200
+        self.upgrade_cost = TowerData.Archer_Upgrade[self.level].get("upgrade_cost")
+        self.sell_cost = TowerData.Archer_Upgrade[self.level - 1].get("sell_cost")
 
         self.range_image = pg.Surface((self.range * 2, self.range * 2))
         self.range_image.fill((0, 0, 0))
@@ -24,7 +28,6 @@ class ArcherTower(Tower):
         self.range_image.set_alpha(100)
         self.range_rect = self.range_image.get_rect()
         self.range_rect.center = self.rect.center
-
 
         self.weapon = ArcherWeapon(tile_x, tile_y)
 
@@ -41,23 +44,28 @@ class ArcherTower(Tower):
             self.frame.append(frame)
 
     def pick_target(self, enemy_group):
-        x_dist = 0
-        y_dist = 0
         for enemy in enemy_group:
-            x_dist = enemy.pos[0] - self.x
-            y_dist = enemy.pos[1] - self.y
-            dist = math.sqrt(x_dist ** 2 + y_dist ** 2)
-            if dist < self.range:
-                self.target = enemy
-                self.weapon.angle = math.degrees(math.atan2(-y_dist, x_dist))
-            else:
-                self.weapon.reset_animation()
+            if enemy.current_health > 0:
+                x_dist = enemy.pos[0] - self.x
+                y_dist = enemy.pos[1] - self.y
+                dist = math.sqrt(x_dist ** 2 + y_dist ** 2)
+                if dist < self.range and enemy.current_health > 0:
+                    self.target = enemy
+                    self.weapon.angle = math.degrees(math.atan2(-y_dist, x_dist))
+                    if self.weapon.current_frame == 5 and self.weapon.is_cooling_down == False:
+                        self.target.current_health -= self.weapon.damage
+                    return
+        self.target = None
+        self.weapon.reset_animation()
 
     def upgrade_level(self):
         self.level += 1
         self.current_frame += 1
         self.image = self.frame[self.current_frame]
         self.range = TowerData.Archer_Upgrade[self.level - 1].get("range")
+        if self.level < Config.get("MAX_LEVEL"):
+            self.upgrade_cost = TowerData.Archer_Upgrade[self.level].get("upgrade_cost")
+        self.sell_cost = TowerData.Archer_Upgrade[self.level - 1].get("sell_cost")
 
         self.range_image = pg.Surface((self.range * 2, self.range * 2))
         self.range_image.fill((0, 0, 0))
@@ -66,6 +74,8 @@ class ArcherTower(Tower):
         self.range_image.set_alpha(100)
         self.range_rect = self.range_image.get_rect()
         self.range_rect.center = self.rect.center
+
+        self.weapon.damage = TowerData.Archer_Upgrade[self.level - 1].get("damage")
 
     def draw(self, screen):
         self.weapon.image = pg.transform.rotate(self.weapon.original_image, self.weapon.angle - 90)

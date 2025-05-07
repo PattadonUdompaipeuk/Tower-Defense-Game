@@ -1,15 +1,14 @@
 import pygame as pg
 from config import Config
 from tower_data import TowerData
-class ArcherWeapon(pg.sprite.Sprite):
+class SlowWeapon(pg.sprite.Sprite):
     def __init__(self, tile_x, tile_y):
-        pg.sprite.Sprite().__init__()
-
+        super().__init__()
         pg.init()
         self.tile_x = tile_x
         self.tile_y = tile_y
 
-        self.set_y_center = 1.5
+        self.set_y_center = 1.25
 
         self.x = (self.tile_x) * (Config.get("TILE_SIZE"))
         self.y = (self.tile_y - self.set_y_center) * (Config.get("TILE_SIZE"))
@@ -17,29 +16,27 @@ class ArcherWeapon(pg.sprite.Sprite):
         self.level = 1
         self.frame = []
         self.weapon_spritesheets = []
+        self.weapon_projectile_spritesheets = []
         for x in range(1, Config.get("MAX_LEVEL") + 1):
-            weapon_sheet = pg.image.load(f'materials/tower/Foozle_2DS0019_Spire_TowerPack_3/Towers Weapons/Tower 06/'
-                                         f'Spritesheets/Tower 06 - Level 0{x} - Weapon.png').convert_alpha()
+            weapon_sheet = pg.image.load(f'materials/tower/Foozle_2DS0019_Spire_TowerPack_3/Towers Weapons/Tower 08/'
+                                         f'Spritesheets/Tower 08 - Level 0{x} - Weapon.png').convert_alpha()
             self.weapon_spritesheets.append(weapon_sheet)
 
         self.weapon_image = self.weapon_spritesheets[self.level - 1]
 
-        self.load_frames_from_spritesheet(6, 1)
+        self.load_frames_from_spritesheet(10,1)
         self.current_frame = 0
-        self.angle = 90
-        self.original_image = self.frame[self.current_frame]
-        self.image = pg.transform.rotate(self.original_image, self.angle)
-
+        self.image = self.frame[self.current_frame]
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
 
-        self.damage = TowerData.Archer_Upgrade[self.level - 1].get("damage")
+        self.damage = TowerData.Slow_Upgrade[self.level - 1].get("damage")
 
         self.fire_rate_timer = 0
-        self.fire_rate = TowerData.Archer_Upgrade[self.level - 1].get("fire_rate")
+        self.fire_rate = TowerData.Slow_Upgrade[self.level - 1].get("fire_rate")
 
         self.is_cooling_down = False
-        self.cooldown = TowerData.Archer_Upgrade[self.level - 1].get("cooldown")
+        self.cooldown = TowerData.Slow_Upgrade[self.level - 1].get("cooldown")
         self.cooldown_timer = 0
 
     def load_frames_from_spritesheet(self, num_width, num_height):
@@ -47,7 +44,7 @@ class ArcherWeapon(pg.sprite.Sprite):
         frame_width = sheet_width // num_width
         frame_height = sheet_height // num_height
 
-        for i in range(6):
+        for i in range(10):
             frame = pg.transform.smoothscale(self.weapon_image.subsurface(
                 (i * frame_width, frame_height * 0, frame_width, frame_height)
             ), (frame_width, frame_height))
@@ -56,25 +53,24 @@ class ArcherWeapon(pg.sprite.Sprite):
 
     def upgrade_level(self):
         self.level += 1
-        self.set_y_center += 0.5
+        self.current_frame = 0
+        self.set_y_center += 0.85
         self.y = (self.tile_y - self.set_y_center) * (Config.get("TILE_SIZE"))
         self.weapon_image = self.weapon_spritesheets[self.level - 1]
         self.frame = []
-        self.load_frames_from_spritesheet(6, 1)
-
-        self.current_frame = 0
-        self.angle = 90
-        self.original_image = self.frame[self.current_frame]
-        self.image = pg.transform.rotate(self.original_image, self.angle)
-
+        self.load_frames_from_spritesheet(10, 1)
+        self.current_frame += 1
+        self.image = self.frame[self.current_frame]
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
 
+        self.damage = TowerData.Slow_Upgrade[self.level - 1].get("damage")
+
         self.fire_rate_timer = 0
-        self.fire_rate = TowerData.Archer_Upgrade[self.level - 1].get("fire_rate")
+        self.fire_rate = TowerData.Slow_Upgrade[self.level - 1].get("fire_rate")
 
         self.is_cooling_down = False
-        self.cooldown = TowerData.Archer_Upgrade[self.level - 1].get("cooldown")
+        self.cooldown = TowerData.Slow_Upgrade[self.level - 1].get("cooldown")
         self.cooldown_timer = 0
 
     def update(self, dt):
@@ -97,11 +93,8 @@ class ArcherWeapon(pg.sprite.Sprite):
                 self.current_frame = len(self.frame) - 1
                 self.is_cooling_down = True
             else:
-                self.original_image = self.frame[self.current_frame]
+                self.image = self.frame[self.current_frame]
 
     def reset_animation(self):
         self.current_frame = 0
-        self.original_image = self.frame[self.current_frame]
-
-
-
+        self.image = self.frame[self.current_frame]

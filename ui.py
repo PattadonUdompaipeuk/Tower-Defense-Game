@@ -3,6 +3,7 @@ from config import Config
 from tower_icon import TowerIcon
 from magic_tower import MagicTower
 from archer_tower import ArcherTower
+from slow_tower import SlowTower
 from spritesheet_data import SpriteSheet_data
 from Button import Button
 
@@ -18,7 +19,7 @@ class UI:
         self.upgrade_img = SpriteSheet_data(Config.get("BUTTON"), 5, 2, 16 * 2, 16 * 2)
         self.upgrade_img.load_frames_from_spritesheet(12, 12)
         self.upgrade_btn = Button(self.upgrade_img.frame[4], Config.get("WIN_W") + 80,
-                                  (Config.get("WIN_H")) - 60, True)
+                                  (Config.get("WIN_H")) - 60)
 
         self.max_img = pg.Surface((15 * 3, 15 * 2))
         self.max_img.fill("green3")
@@ -26,7 +27,7 @@ class UI:
         self.sell_img = SpriteSheet_data(Config.get("BUTTON"), 6, 8, 16 * 2, 16 * 2)
         self.sell_img.load_frames_from_spritesheet(12, 12)
         self.sell_btn = Button(self.sell_img.frame[5], Config.get("WIN_W") + 250,
-                                  (Config.get("WIN_H")) - 60, True)
+                                  (Config.get("WIN_H")) - 60)
 
         self.game_coin = pg.image.load("materials/TD_map/pixel_coin-removebg-preview.png").convert_alpha()
         self.game_coin_img = pg.transform.scale(self.game_coin, (340 / 10, 340 / 10))
@@ -130,12 +131,20 @@ class UI:
             set_weapon_center = Config.get("SET_MAGIC_WEAPON")[tower.level - 1]
         elif isinstance(tower, ArcherTower):
             set_weapon_center = Config.get("SET_ARCHER_WEAPON")[tower.level - 1]
-
-        manage_bar_tower = TowerIcon(tower, (Config.get("WIN_W") + Config.get("SIDE_PANEL") - 120,
+        elif isinstance(tower, SlowTower):
+            set_weapon_center = Config.get("SET_SLOW_WEAPON")[tower.level - 1]
+        if not isinstance(tower, SlowTower):
+            manage_bar_tower = TowerIcon(tower, (Config.get("WIN_W") + Config.get("SIDE_PANEL") - 120,
                                              Config.get("WIN_H")/2 + Config.get("WIN_H")/4 - 30),
                                      (Config.get("WIN_W") + Config.get("SIDE_PANEL") - 120,
                                       Config.get("WIN_H")/2 + Config.get("WIN_H")/4 - 30 - set_weapon_center))
-        manage_bar_tower.draw(screen)
+            manage_bar_tower.draw(screen)
+        else:
+            manage_bar_tower = TowerIcon(tower, (Config.get("WIN_W") + Config.get("SIDE_PANEL") - 120,
+                                            Config.get("WIN_H") / 2 + Config.get("WIN_H") / 4 - 60),
+                                    (Config.get("WIN_W") + Config.get("SIDE_PANEL") - 120,
+                                     Config.get("WIN_H") / 2 + Config.get("WIN_H") / 4 - 30 - set_weapon_center))
+            manage_bar_tower.draw(screen)
 
     def draw_status(self, map, screen):
         panel_rect = pg.Rect(0, 0, 140, 100)

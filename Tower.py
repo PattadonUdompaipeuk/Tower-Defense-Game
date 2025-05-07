@@ -38,7 +38,7 @@ class Tower(pg.sprite.Sprite):
         pass
 
     def update(self, dt, enemy_group, screen):
-        if self.target and self.target not in enemy_group:
+        if self.target not in enemy_group:
             self.target = None
             self.weapon.reset_animation()
         if self.target:

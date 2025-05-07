@@ -25,7 +25,9 @@ class Enemy(pg.sprite.Sprite):
 
         self.max_health = self.data.get("health")
         self.current_health = self.data.get("health")
+        self.base_speed = self.data.get("speed")
         self.speed = self.data.get("speed")
+        self.slow_until = 0
         self.money_drop = self.data.get("money_drop")
 
         self.current_frame = 0
@@ -49,7 +51,7 @@ class Enemy(pg.sprite.Sprite):
             self.walk1.append(frame)
 
         for i in range(self.data.get("row")):
-            if self.enemy_type == "Magma_crab":
+            if self.enemy_type not in ("Fire_bug", "Leaf_bug"):
                 frame = pg.transform.flip(pg.transform.scale(self.img.subsurface(
                     (i * frame_width, frame_height * self.data.get("col")[1], frame_width, frame_height)
                 ), self.data.get("size")), True, False)
@@ -62,6 +64,8 @@ class Enemy(pg.sprite.Sprite):
 
     def update(self, dt, screen, map):
         self.check_alive(map)
+        if pg.time.get_ticks() > self.slow_until:
+            self.speed = self.base_speed
         self.move(map)
         self.animate(dt)
         self.draw(screen)
@@ -111,6 +115,10 @@ class Enemy(pg.sprite.Sprite):
         if self.current_health <= 0:
             map.money += self.money_drop
             self.kill()
+
+    def apply_slow(self, factor=0.5, duration=1000):
+        self.speed = self.base_speed * factor
+        self.slow_until = pg.time.get_ticks() + duration
 
     def draw_health_bar(self, surface):
         bar_width = 40

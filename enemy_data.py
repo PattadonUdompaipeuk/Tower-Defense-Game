@@ -8,19 +8,19 @@ class Enemy_data:
             # wave1
             "Fire_bug": 5,
             "Leaf_bug": 0,
-            "Magma_crab": 1
+            "Magma_crab": 0
         },
         {
             # wave2
-            "Fire_bug": 10,
+            "Fire_bug": 5,
             "Leaf_bug": 5,
             "Magma_crab": 0
         },
         {
             # wave3
-            "Fire_bug": 7,
-            "Leaf_bug": 5,
-            "Magma_crab": 3
+            "Fire_bug": 8,
+            "Leaf_bug": 3,
+            "Magma_crab": 1
         }
     ]
 

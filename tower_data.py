@@ -34,7 +34,7 @@ class TowerData:
             # level 1
             "range": 150,
             "cooldown": 0.2,
-            "fire_rate": 0.015,
+            "fire_rate": 0.03,
             "damage": 10,
             "upgrade_cost": 0,
             "sell_cost": 200,
@@ -43,18 +43,18 @@ class TowerData:
             # level 2
             "range": 170,
             "cooldown": 0.1,
-            "fire_rate": 0.01,
+            "fire_rate": 0.02,
             "damage": 15,
-            "upgrade_cost": 200,
+            "upgrade_cost": 250,
             "sell_cost": 360,
         },
         {
             # level 3
             "range": 190,
-            "cooldown": 0.01,
-            "fire_rate": 0.005,
+            "cooldown": 0.075,
+            "fire_rate": 0.015,
             "damage": 20,
-            "upgrade_cost": 300,
-            "sell_cost": 600,
+            "upgrade_cost": 350,
+            "sell_cost": 640,
         }
     ]

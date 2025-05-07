@@ -1,18 +1,26 @@
 class Enemy_data:
     enemy_walk_path = ["way1,way2"]
 
-    wave_money = [0, 100]
+    wave_money = [0, 150, 250]
 
     enemy_wave = [
         {
             # wave1
             "Fire_bug": 5,
             "Leaf_bug": 0,
+            "Magma_crab": 1
         },
         {
             # wave2
             "Fire_bug": 10,
             "Leaf_bug": 5,
+            "Magma_crab": 0
+        },
+        {
+            # wave3
+            "Fire_bug": 7,
+            "Leaf_bug": 5,
+            "Magma_crab": 3
         }
     ]
 
@@ -24,7 +32,7 @@ class Enemy_data:
         "col": (3, 5),
         "health": 30,
         "speed": 2.75,
-        "money_drop": 10
+        "money_drop": 15
     }
 
     leaf_bug = {
@@ -35,5 +43,16 @@ class Enemy_data:
         "col": (3, 5),
         "health": 15,
         "speed": 4.15,
-        "money_drop": 15
+        "money_drop": 25
+    }
+
+    magma_crab = {
+        "num_width": 10,
+        "num_height": 9,
+        "size": (64, 64),
+        "row": 8,
+        "col": (3, 5),
+        "health": 80,
+        "speed": 1.75,
+        "money_drop": 30
     }

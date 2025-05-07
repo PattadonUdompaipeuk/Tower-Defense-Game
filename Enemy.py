@@ -4,12 +4,15 @@ from pygame.math import Vector2
 from config import Config
 
 class Enemy(pg.sprite.Sprite):
-    def __init__(self,enemy_type, waypoint, img):
+    def __init__(self, enemy_type, waypoint, img):
         super().__init__()
-        if enemy_type == "Fire_bug":
+        self.enemy_type = enemy_type
+        if self.enemy_type == "Fire_bug":
             self.data = Enemy_data.fire_bug
-        elif enemy_type == "Leaf_bug":
+        elif self.enemy_type == "Leaf_bug":
             self.data = Enemy_data.leaf_bug
+        elif self.enemy_type == "Magma_crab":
+            self.data = Enemy_data.magma_crab
         self.img = img.get(enemy_type)
         self.walk1 = []
         self.walk2 = []
@@ -46,10 +49,16 @@ class Enemy(pg.sprite.Sprite):
             self.walk1.append(frame)
 
         for i in range(self.data.get("row")):
-            frame = pg.transform.scale(self.img.subsurface(
-                (i * frame_width, frame_height * self.data.get("col")[1], frame_width, frame_height)
-            ), self.data.get("size"))
-            self.walk2.append(frame)
+            if self.enemy_type == "Magma_crab":
+                frame = pg.transform.flip(pg.transform.scale(self.img.subsurface(
+                    (i * frame_width, frame_height * self.data.get("col")[1], frame_width, frame_height)
+                ), self.data.get("size")), True, False)
+                self.walk2.append(frame)
+            else:
+                frame = pg.transform.scale(self.img.subsurface(
+                    (i * frame_width, frame_height * self.data.get("col")[1], frame_width, frame_height)
+                ), self.data.get("size"))
+                self.walk2.append(frame)
 
     def update(self, dt, screen, map):
         self.check_alive(map)
@@ -112,9 +121,16 @@ class Enemy(pg.sprite.Sprite):
         bar_x = self.rect.centerx - bar_width / 2
         bar_y = self.rect.y - 10
 
-        pg.draw.rect(surface, (60, 60, 60), (bar_x, bar_y, bar_width, bar_height))
+        text_x = self.rect.centerx - 5
+        text_y = self.rect.y - 10
 
+        font = pg.font.Font('Stacked pixel.ttf', 12)
+        font_render = font.render(str(self.current_health), True, Config.get("BLACK"))
+
+        pg.draw.rect(surface, (60, 60, 60), (bar_x, bar_y, bar_width, bar_height))
         pg.draw.rect(surface, Config.get("RED"), (bar_x, bar_y, fill_width, bar_height))
+        surface.blit(font_render, (text_x, text_y))
+
 
 
 

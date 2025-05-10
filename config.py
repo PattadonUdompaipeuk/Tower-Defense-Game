@@ -21,7 +21,7 @@ class Config:
         'SPAWN_DELAY': 1500,
         'WAVE_DELAY': 10000,
         'BASE_HP': 100,
-        'MONEY': 1200,
+        'MONEY': 800,
         'SET_MAGIC_WEAPON': [16, 24, 32],
         'SET_ARCHER_WEAPON': [10, 15, 25],
         'SET_SLOW_WEAPON': [10, 25, 37]

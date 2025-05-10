@@ -7,13 +7,15 @@ import math
 class SlowTower(Tower):
     def __init__(self, tile_x, tile_y):
         pg.init()
-        self.name = "Slow Tower"
-        self.slow_tower = pg.image.load("materials/tower/Foozle_2DS0019_Spire_TowerPack_3/Towers bases/PNGs/Tower 08.png")
-        self.icon_frame = []
+        self.__slow_tower = pg.image.load("materials/tower/Foozle_2DS0019_Spire_TowerPack_3/Towers bases/PNGs/Tower 08.png")
+        self.__frame = []
         self.load_frames_from_spritesheet(3,1)
-        self.icon_index = 0
-        self.image = self.icon_frame[self.icon_index]
-        super().__init__(self.image, tile_x, tile_y)
+        self.__current_frame = 0
+        image = self.__frame[self.__current_frame]
+        super().__init__(image, tile_x, tile_y)
+        self.name = "Slow Tower"
+        self.type = "Slow"
+
         self.x = (self.tile_x) * (Config.get("TILE_SIZE"))
         self.y = (self.tile_y - 2.5) * (Config.get("TILE_SIZE"))
         self.rect.center = (self.x, self.y)
@@ -23,9 +25,9 @@ class SlowTower(Tower):
         self.buy_cost = 300
         self.upgrade_cost = TowerData.Slow_Upgrade[self.level].get("upgrade_cost")
         self.sell_cost = TowerData.Slow_Upgrade[self.level - 1].get("sell_cost")
-        self.targets = []
-        self.slow_factor = TowerData.Slow_Upgrade[self.level - 1].get("slow_factor")
-        self.slow_duration = TowerData.Slow_Upgrade[self.level - 1].get("slow_duration")
+        self.__targets = []
+        self.__slow_factor = TowerData.Slow_Upgrade[self.level - 1].get("slow_factor")
+        self.__slow_duration = TowerData.Slow_Upgrade[self.level - 1].get("slow_duration")
 
         self.range_image = pg.Surface((self.range * 2, self.range * 2))
         self.range_image.fill((0, 0, 0))
@@ -34,26 +36,33 @@ class SlowTower(Tower):
         self.range_image.set_alpha(100)
         self.range_rect = self.range_image.get_rect()
         self.range_rect.center = self.rect.center
-        self.range_rect.centery += 56
+        self.range_rect.centery += 48
 
         self.weapon = SlowWeapon(tile_x, tile_y)
 
+    @property
+    def slow_factor(self):
+        return self.__slow_factor
+
+    @property
+    def slow_duration(self):
+        return self.__slow_duration
+
     def load_frames_from_spritesheet(self, num_width, num_height):
-        sheet_width, sheet_height = self.slow_tower.get_size()
+        sheet_width, sheet_height = self.__slow_tower.get_size()
         frame_width = sheet_width // num_width
         frame_height = sheet_height // num_height
 
         for i in range(3):
-            frame = pg.transform.smoothscale(self.slow_tower.subsurface(
+            frame = pg.transform.smoothscale(self.__slow_tower.subsurface(
                 (i * frame_width, frame_height * 0, frame_width, frame_height)
             ), (frame_width, frame_height))
 
-            self.icon_frame.append(frame)
+            self.__frame.append(frame)
 
     def update(self, dt, enemy_group, screen):
-        self.pick_targets(enemy_group)  # <== ย้ายมาไว้บนสุด
-
-        if not self.targets:
+        self.pick_targets(enemy_group)
+        if not self.__targets:
             self.weapon.reset_animation()
         else:
             self.weapon.update(dt)
@@ -63,20 +72,20 @@ class SlowTower(Tower):
         self.draw(screen)
 
     def attack(self):
-        for enemy in self.targets:
-            enemy.apply_slow(self.slow_factor, self.slow_duration)
+        for enemy in self.__targets:
+            enemy.apply_slow(self.__slow_factor, self.__slow_duration)
 
     def upgrade_level(self):
         self.level += 1
-        self.icon_index += 1
-        self.image = self.icon_frame[self.icon_index]
+        self.__current_frame += 1
+        self.image = self.__frame[self.__current_frame]
         self.range = TowerData.Slow_Upgrade[self.level - 1].get("range")
         self.weapon.damage = TowerData.Slow_Upgrade[self.level - 1].get("damage")
         if self.level < Config.get("MAX_LEVEL"):
             self.upgrade_cost = TowerData.Slow_Upgrade[self.level].get("upgrade_cost")
         self.sell_cost = TowerData.Slow_Upgrade[self.level - 1].get("sell_cost")
-        self.slow_factor = TowerData.Slow_Upgrade[self.level - 1].get("slow_factor")
-        self.slow_duration = TowerData.Slow_Upgrade[self.level - 1].get("slow_duration")
+        self.__slow_factor = TowerData.Slow_Upgrade[self.level - 1].get("slow_factor")
+        self.__slow_duration = TowerData.Slow_Upgrade[self.level - 1].get("slow_duration")
 
         self.range_image = pg.Surface((self.range * 2, self.range * 2))
         self.range_image.fill((0, 0, 0))
@@ -85,14 +94,14 @@ class SlowTower(Tower):
         self.range_image.set_alpha(100)
         self.range_rect = self.range_image.get_rect()
         self.range_rect.center = self.rect.center
-        self.range_rect.centery += 56
+        self.range_rect.centery += 48
 
     def pick_targets(self, enemy_group):
-        self.targets = []
+        self.__targets = []
         for enemy in enemy_group:
             if enemy.current_health > 0:
                 x_dist = enemy.pos[0] - self.x
                 y_dist = enemy.pos[1] - self.y
                 dist = math.sqrt(x_dist ** 2 + y_dist ** 2)
                 if dist < self.range:
-                    self.targets.append(enemy)
+                    self.__targets.append(enemy)

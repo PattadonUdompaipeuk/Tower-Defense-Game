@@ -23,7 +23,7 @@ class TowerData:
             "range": 170,
             "cooldown": 0.2,
             "fire_rate": 0.01,
-            "damage": 10,
+            "damage": 8,
             "upgrade_cost": 250,
             "sell_cost": 520,
         }
@@ -34,26 +34,26 @@ class TowerData:
             # level 1
             "range": 150,
             "cooldown": 0.2,
-            "fire_rate": 0.03,
-            "damage": 10,
+            "fire_rate": 0.02,
+            "damage": 5,
             "upgrade_cost": 0,
             "sell_cost": 200,
         },
         {
             # level 2
             "range": 170,
-            "cooldown": 0.1,
+            "cooldown": 0.15,
             "fire_rate": 0.02,
-            "damage": 15,
+            "damage": 10,
             "upgrade_cost": 250,
             "sell_cost": 360,
         },
         {
             # level 3
             "range": 190,
-            "cooldown": 0.075,
-            "fire_rate": 0.015,
-            "damage": 20,
+            "cooldown": 0.01,
+            "fire_rate": 0.0175,
+            "damage": 15,
             "upgrade_cost": 350,
             "sell_cost": 640,
         }
@@ -62,34 +62,34 @@ class TowerData:
     Slow_Upgrade = [
         {
             # level 1
-            "range": 170,
-            "cooldown": 0.4,
+            "range": 150,
+            "cooldown": 0.6,
             "fire_rate": 0.03,
             "damage": 0,
-            "slow_factor": 0.75,
+            "slow_factor": 0.8,
             "slow_duration": 1000,
             "upgrade_cost": 0,
             "sell_cost": 200,
         },
         {
             # level 2
-            "range": 200,
-            "cooldown": 0.35,
+            "range": 180,
+            "cooldown": 0.55,
             "fire_rate": 0.02,
             "damage": 0,
-            "slow_factor": 0.7,
+            "slow_factor": 0.75,
             "slow_duration": 1200,
             "upgrade_cost": 250,
             "sell_cost": 360,
         },
         {
             # level 3
-            "range": 230,
-            "cooldown": 0.3,
+            "range": 210,
+            "cooldown": 0.5,
             "fire_rate": 0.015,
             "damage": 0,
-            "slow_factor": 0.6,
-            "slow_duration": 1500,
+            "slow_factor": 0.7,
+            "slow_duration": 1400,
             "upgrade_cost": 350,
             "sell_cost": 640,
         }

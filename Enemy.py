@@ -6,138 +6,151 @@ from config import Config
 class Enemy(pg.sprite.Sprite):
     def __init__(self, enemy_type, waypoint, img):
         super().__init__()
-        self.enemy_type = enemy_type
-        if self.enemy_type == "Fire_bug":
-            self.data = Enemy_data.fire_bug
-        elif self.enemy_type == "Leaf_bug":
-            self.data = Enemy_data.leaf_bug
-        elif self.enemy_type == "Magma_crab":
-            self.data = Enemy_data.magma_crab
-        self.img = img.get(enemy_type)
-        self.walk1 = []
-        self.walk2 = []
-        self.load_frames_from_spritesheet(self.data.get("num_width"), self.data.get("num_height"))
-        self.walk_images = self.walk1
-        self.waypoint = waypoint
-        self.pos = Vector2(self.waypoint[0])
-        self.target_waypoint = 1
-        self.init_target = Vector2(self.waypoint[self.target_waypoint])
+        self.__enemy_type = enemy_type
+        if self.__enemy_type == "Fire_bug":
+            self.__data = Enemy_data.fire_bug
+        elif self.__enemy_type == "Leaf_bug":
+            self.__data = Enemy_data.leaf_bug
+        elif self.__enemy_type == "Magma_crab":
+            self.__data = Enemy_data.magma_crab
+        self.__img = img.get(enemy_type)
+        self.__walk1 = []
+        self.__walk2 = []
+        self.load_frames_from_spritesheet(self.__data.get("num_width"), self.__data.get("num_height"))
+        self.__walk_images = self.__walk1
+        self.__waypoint = waypoint
+        self.__pos = Vector2(self.__waypoint[0])
+        self.__target = None
+        self.__movement = 0
+        self.__target_waypoint = 1
+        self.__init_target = Vector2(self.__waypoint[self.__target_waypoint])
 
-        self.max_health = self.data.get("health")
-        self.current_health = self.data.get("health")
-        self.base_speed = self.data.get("speed")
-        self.speed = self.data.get("speed")
-        self.slow_until = 0
-        self.money_drop = self.data.get("money_drop")
+        self.__max_health = self.__data.get("health")
+        self.__current_health = self.__data.get("health")
+        self.__base_speed = self.__data.get("speed")
+        self.__speed = self.__data.get("speed")
+        self.__slow_until = 0
+        self.__money_drop = self.__data.get("money_drop")
 
-        self.current_frame = 0
-        self.image = self.walk_images[self.current_frame]
-        self.move_forward = False
-        self.move_down = False
-        self.rect = self.image.get_rect()
-        self.rect.center = self.pos
-        self.animation_speed = 0.01
-        self.animation_timer = 0
+        self.__current_frame = 0
+        self.__image = self.__walk_images[self.__current_frame]
+        self.__move_forward = False
+        self.__move_down = False
+        self.__rect = self.__image.get_rect()
+        self.__rect.center = self.__pos
+        self.__animation_speed = 0.01
+        self.__animation_timer = 0
+
+    @property
+    def current_health(self):
+        return self.__current_health
+
+    @current_health.setter
+    def current_health(self, health):
+        self.__current_health = health
+
+    @property
+    def pos(self):
+        return self.__pos
 
     def load_frames_from_spritesheet(self, num_width, num_height):
-        sheet_width, sheet_height = self.img.get_size()
+        sheet_width, sheet_height = self.__img.get_size()
         frame_width = sheet_width // num_width
         frame_height = sheet_height // num_height
 
-        for i in range(self.data.get("row")):
-            frame = pg.transform.scale(self.img.subsurface(
-                (i * frame_width, frame_height * self.data.get("col")[0], frame_width, frame_height)
-            ), self.data.get("size"))
-            self.walk1.append(frame)
+        for i in range(self.__data.get("row")):
+            frame = pg.transform.scale(self.__img.subsurface(
+                (i * frame_width, frame_height * self.__data.get("col")[0], frame_width, frame_height)
+            ), self.__data.get("size"))
+            self.__walk1.append(frame)
 
-        for i in range(self.data.get("row")):
-            if self.enemy_type not in ("Fire_bug", "Leaf_bug"):
-                frame = pg.transform.flip(pg.transform.scale(self.img.subsurface(
-                    (i * frame_width, frame_height * self.data.get("col")[1], frame_width, frame_height)
-                ), self.data.get("size")), True, False)
-                self.walk2.append(frame)
+        for i in range(self.__data.get("row")):
+            if self.__enemy_type not in ("Fire_bug", "Leaf_bug"):
+                frame = pg.transform.flip(pg.transform.scale(self.__img.subsurface(
+                    (i * frame_width, frame_height * self.__data.get("col")[1], frame_width, frame_height)
+                ), self.__data.get("size")), True, False)
+                self.__walk2.append(frame)
             else:
-                frame = pg.transform.scale(self.img.subsurface(
-                    (i * frame_width, frame_height * self.data.get("col")[1], frame_width, frame_height)
-                ), self.data.get("size"))
-                self.walk2.append(frame)
+                frame = pg.transform.scale(self.__img.subsurface(
+                    (i * frame_width, frame_height * self.__data.get("col")[1], frame_width, frame_height)
+                ), self.__data.get("size"))
+                self.__walk2.append(frame)
 
     def update(self, dt, screen, map):
+        self.draw_health_bar(screen)
         self.check_alive(map)
-        if pg.time.get_ticks() > self.slow_until:
-            self.speed = self.base_speed
+        if pg.time.get_ticks() > self.__slow_until:
+            self.__speed = self.__base_speed
         self.move(map)
         self.animate(dt)
         self.draw(screen)
-        self.draw_health_bar(screen)
+
 
     def move(self, map):
-        if len(self.waypoint) > self.target_waypoint:
-            self.target = Vector2(self.waypoint[self.target_waypoint])
-            self.movement = self.target - self.pos
+        if len(self.__waypoint) > self.__target_waypoint:
+            self.__target = Vector2(self.__waypoint[self.__target_waypoint])
+            self.__movement = self.__target - self.__pos
         else:
-            map.hp -= self.current_health
+            map.hp -= self.__current_health
+            map.missed_enemies += 1
             self.kill()
 
-        distance = self.movement.length()
-        # print(distance)
-        if distance >= self.speed:
-            direction = self.movement.normalize()
-            self.pos += direction * self.speed
-            if direction.y > direction.x and not self.move_down:
-                self.walk_images = self.walk1
-                self.move_down = True
-                self.move_forward = False
-            elif direction.x > direction.y and not self.move_forward:
-                self.walk_images = self.walk2
-                self.move_forward = True
-                self.move_down = False
+        distance = self.__movement.length()
+
+        if distance >= self.__speed:
+            direction = self.__movement.normalize()
+            self.__pos += direction * self.__speed
+            if direction.y > direction.x and not self.__move_down:
+                self.__walk_images = self.__walk1
+                self.__move_down = True
+                self.__move_forward = False
+            elif direction.x > direction.y and not self.__move_forward:
+                self.__walk_images = self.__walk2
+                self.__move_forward = True
+                self.__move_down = False
 
         elif distance != 0:
-            self.pos += self.movement.normalize() * self.speed
-            self.target_waypoint += 1
+            self.__pos += self.__movement.normalize() * self.__speed
+            self.__target_waypoint += 1
 
-        self.rect.center = self.pos
+        self.__rect.center = self.__pos
 
     def animate(self, dt):
-        self.animation_timer += dt
-        if self.animation_timer >= self.animation_speed:
-            self.animation_timer = 0
-            self.current_frame = (self.current_frame + 1) % len(self.walk_images)
-            new_image = self.walk_images[self.current_frame]
-            self.image = new_image
+        self.__animation_timer += dt
+        if self.__animation_timer >= self.__animation_speed:
+            self.__animation_timer = 0
+            self.__current_frame = (self.__current_frame + 1) % len(self.__walk_images)
+            self.__image = self.__walk_images[self.__current_frame]
 
     def draw(self, screen):
-        if self.current_health > 0:
-            screen.blit(self.image, self.rect)
+        if self.__current_health > 0:
+            screen.blit(self.__image, self.__rect)
 
     def check_alive(self, map):
-        if self.current_health <= 0:
-            map.money += self.money_drop
+        if self.__current_health <= 0:
+            map.money += self.__money_drop
+            map.killed_enemies += 1
             self.kill()
 
-    def apply_slow(self, factor=0.5, duration=1000):
-        self.speed = self.base_speed * factor
-        self.slow_until = pg.time.get_ticks() + duration
+    def apply_slow(self, factor, duration):
+        self.__speed = self.__base_speed * factor
+        self.__slow_until = pg.time.get_ticks() + duration
 
     def draw_health_bar(self, surface):
         bar_width = 40
         bar_height = 10
-        health_ratio = self.current_health / self.max_health
+        health_ratio = self.__current_health / self.__max_health
         fill_width = int(bar_width * health_ratio)
-
-        bar_x = self.rect.centerx - bar_width / 2
-        bar_y = self.rect.y - 10
-
-        text_x = self.rect.centerx - 5
-        text_y = self.rect.y - 10
-
-        font = pg.font.Font('Stacked pixel.ttf', 12)
-        font_render = font.render(str(self.current_health), True, Config.get("BLACK"))
-
+        bar_x = self.__rect.centerx - bar_width / 2
+        bar_y = self.__rect.y - 10
+        text_x = self.__rect.centerx - 5
+        text_y = self.__rect.y - 10
+        font = pg.font.Font('materials/Stacked pixel.ttf', 12)
+        font_render = font.render(str(self.__current_health), True, Config.get("BLACK"))
         pg.draw.rect(surface, (60, 60, 60), (bar_x, bar_y, bar_width, bar_height))
         pg.draw.rect(surface, Config.get("RED"), (bar_x, bar_y, fill_width, bar_height))
-        surface.blit(font_render, (text_x, text_y))
+        if self.__current_health >= 0:
+            surface.blit(font_render, (text_x, text_y))
 
 
 

@@ -7,19 +7,20 @@ from tower_data import TowerData
 class ArcherTower(Tower):
     def __init__(self, tile_x, tile_y):
         pg.init()
-        self.name = "Archer Tower"
-        self.archer_tower = pg.image.load("materials/tower/Foozle_2DS0019_Spire_TowerPack_3/Towers bases/PNGs/Tower 06.png")
-        self.frame = []
+        self.__archer_tower = pg.image.load("materials/tower/Foozle_2DS0019_Spire_TowerPack_3/Towers bases/PNGs/Tower 06.png")
+        self.__frame = []
         self.load_frames_from_spritesheet(3,1)
-        self.current_frame = 0
-        self.image = self.frame[self.current_frame]
-        super().__init__(self.image, tile_x, tile_y)
+        self.__current_frame = 0
+        image = self.__frame[self.__current_frame]
+        super().__init__(image, tile_x, tile_y)
+        self.name = "Archer Tower"
+        self.type = "Archer"
 
-        self.level = 1
-        self.range = TowerData.Archer_Upgrade[self.level - 1].get("range")
+        self.__level = 1
+        self.range = TowerData.Archer_Upgrade[self.__level - 1].get("range")
         self.buy_cost = 200
-        self.upgrade_cost = TowerData.Archer_Upgrade[self.level].get("upgrade_cost")
-        self.sell_cost = TowerData.Archer_Upgrade[self.level - 1].get("sell_cost")
+        self.upgrade_cost = TowerData.Archer_Upgrade[self.__level].get("upgrade_cost")
+        self.sell_cost = TowerData.Archer_Upgrade[self.__level - 1].get("sell_cost")
 
         self.range_image = pg.Surface((self.range * 2, self.range * 2))
         self.range_image.fill((0, 0, 0))
@@ -32,16 +33,16 @@ class ArcherTower(Tower):
         self.weapon = ArcherWeapon(tile_x, tile_y)
 
     def load_frames_from_spritesheet(self, num_width, num_height):
-        sheet_width, sheet_height = self.archer_tower.get_size()
+        sheet_width, sheet_height = self.__archer_tower.get_size()
         frame_width = sheet_width // num_width
         frame_height = sheet_height // num_height
 
         for i in range(3):
-            frame = pg.transform.smoothscale(self.archer_tower.subsurface(
+            frame = pg.transform.smoothscale(self.__archer_tower.subsurface(
                 (i * frame_width, frame_height * 0, frame_width, frame_height)
             ), (frame_width, frame_height))
 
-            self.frame.append(frame)
+            self.__frame.append(frame)
 
     def pick_target(self, enemy_group):
         for enemy in enemy_group:
@@ -60,8 +61,8 @@ class ArcherTower(Tower):
 
     def upgrade_level(self):
         self.level += 1
-        self.current_frame += 1
-        self.image = self.frame[self.current_frame]
+        self.__current_frame += 1
+        self.image = self.__frame[self.__current_frame]
         self.range = TowerData.Archer_Upgrade[self.level - 1].get("range")
         if self.level < Config.get("MAX_LEVEL"):
             self.upgrade_cost = TowerData.Archer_Upgrade[self.level].get("upgrade_cost")

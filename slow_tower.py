@@ -7,7 +7,7 @@ import math
 class SlowTower(Tower):
     def __init__(self, tile_x, tile_y):
         pg.init()
-        self.__slow_tower = pg.image.load("materials/tower/Foozle_2DS0019_Spire_TowerPack_3/Towers bases/PNGs/Tower 08.png")
+        self.__slow_tower = pg.image.load("materials/tower/Towers bases/PNGs/Tower 08.png")
         self.__frame = []
         self.load_frames_from_spritesheet(3,1)
         self.__current_frame = 0

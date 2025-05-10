@@ -30,12 +30,12 @@ class GameManager:
         self.__game_icon = pg.image.load("materials/game_icon.png").convert_alpha()
         self.__game_start_img = pg.image.load("materials/TD_map/start-end bg.png").convert_alpha()
         self.__enemy_image = {
-            "Fire_bug": pg.image.load("materials/monster/Foozle_2DC0028_Spire_EnemyPack_2_Ground/Ground/Spritesheets/"
+            "Fire_bug": pg.image.load("materials/monster/Spritesheets/"
                                       "Firebug.png").convert_alpha(),
-            "Leaf_bug": pg.image.load("materials/monster/Foozle_2DC0028_Spire_EnemyPack_2_Ground/Ground/Spritesheets/"
+            "Leaf_bug": pg.image.load("materials/monster/Spritesheets/"
                                       "Leafbug.png").convert_alpha(),
-            "Magma_crab": pg.image.load("materials/monster/Foozle_2DC0028_Spire_EnemyPack_2_Ground/Ground/Spritesheets/"
-                                      "Magma Crab.png").convert_alpha()
+            "Magma_crab": pg.image.load("materials/monster/Spritesheets/"
+                                        "Magma Crab.png").convert_alpha()
         }
         self.__bg = pg.image.load("materials/TD_map/map1.png")
         self.__bg_image = pg.transform.scale(self.__bg, (Config.get("WIN_W"), Config.get("WIN_H")))

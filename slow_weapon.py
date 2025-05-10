@@ -18,7 +18,7 @@ class SlowWeapon(pg.sprite.Sprite):
         self.weapon_spritesheets = []
         self.weapon_projectile_spritesheets = []
         for x in range(1, Config.get("MAX_LEVEL") + 1):
-            weapon_sheet = pg.image.load(f'materials/tower/Foozle_2DS0019_Spire_TowerPack_3/Towers Weapons/Tower 08/'
+            weapon_sheet = pg.image.load(f'materials/tower/Towers Weapons/Tower 08/'
                                          f'Spritesheets/Tower 08 - Level 0{x} - Weapon.png').convert_alpha()
             self.weapon_spritesheets.append(weapon_sheet)
 

@@ -17,8 +17,8 @@ class ArcherWeapon(pg.sprite.Sprite):
         self.__frame = []
         self.__weapon_spritesheets = []
         for x in range(1, Config.get("MAX_LEVEL") + 1):
-            weapon_sheet = pg.image.load(f'materials/tower/Foozle_2DS0019_Spire_TowerPack_3/Towers Weapons/Tower 06/'
-                                         f'Spritesheets/Tower 06 - Level 0{x} - Weapon.png').convert_alpha()
+            weapon_sheet = pg.image.load(f'materials/tower/Towers Weapons/Tower 06/Spritesheets/'
+                                         f'Tower 06 - Level 0{x} - Weapon.png').convert_alpha()
             self.__weapon_spritesheets.append(weapon_sheet)
 
         self.__weapon_image = self.__weapon_spritesheets[self.__level - 1]

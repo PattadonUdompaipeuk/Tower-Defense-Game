@@ -7,7 +7,7 @@ from tower_data import TowerData
 class ArcherTower(Tower):
     def __init__(self, tile_x, tile_y):
         pg.init()
-        self.__archer_tower = pg.image.load("materials/tower/Foozle_2DS0019_Spire_TowerPack_3/Towers bases/PNGs/Tower 06.png")
+        self.__archer_tower = pg.image.load("materials/tower/Towers bases/PNGs/Tower 06.png")
         self.__frame = []
         self.load_frames_from_spritesheet(3,1)
         self.__current_frame = 0

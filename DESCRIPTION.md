@@ -15,7 +15,7 @@ If too many enemies reach the base, the player loses.
 ## 3.2  Object-Oriented Programming Implementation
 
 ### UML Diagram
-![Feature Summary](C:\Users\Lenovo\Downloads\Tower defense UML diagram)
+<img src="Tower Defense UML Diagram.png" width="600">
 
 
 3.3 Algorithms Involved

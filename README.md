@@ -1,22 +1,10 @@
 # Tower-Defense-Game
 A 2D Tower Defense game built with Python and Pygame, where players strategically place Archer, Magic, and Slow towers to defeat waves of enemies. Each wave increases in difficulty, and players must defend their base using limited resources. Real-time gameplay data is also collected for analysis.
 ## Library requirement:
--  contourpy==1.3.2<br>
--  cycler==0.12.1<br>
--  fonttools==4.57.0<br>
--  kiwisolver==1.4.8<br>
--  matplotlib==3.10.3<br>
--  numpy==2.2.5<br>
--  packaging==25.0<br>
--  pandas==2.2.3<br>
--  pillow==11.2.1<br>
--  pygame==2.6.1<br>
--  pyparsing==3.2.3<br>
--  python-dateutil==2.9.0.post0<br>
--  PyTMX==3.32<br>
--  pytz==2025.2<br>
--  six==1.17.0<br>
--  tzdata==2025.2<br>
+- python 3.13.1
+- matplotlib==3.10.3
+- pandas==2.2.3
+- pygame==2.6.1
 
 Note  :  These versions are minimum requirements. Newer versions should also work.
 # Installation and Running Instructions:
@@ -41,3 +29,13 @@ python GameManager.py
 ```
 python3 GameManager.py
 ```
+# How To Play
+## Goal
+-  Prevent the base from the monster with various type of Tower, Win every wave until the last ^V^.
+## Game play
+- Pick the Tower you would like to buy from the UNIT MANAGER on the right side of the screen.
+- If you want to deselect the tower on UNIT MANAGER bar you can click on cancel button ( Red cross sign) below them.
+- Place tower wherever you would like to ( Area that placeable are those square dirt near the path ).
+- Near the UNIT MANAGER bar you are able to see amount of money and base health you have.
+- You can look the Tower info that you place by click on them it will appear at bottom-right of the screen, You can upgrade or sell the tower there.
+- To restart : Press R

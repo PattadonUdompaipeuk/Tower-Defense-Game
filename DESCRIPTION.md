@@ -49,7 +49,7 @@ The game will store statistical data using CSV files to track player performance
 | Time per Wave            | Helps assess how challenging each wave is by looking at time spent.                  | Measure and record the time spent per wave                                 | time_spent in run method from GameManager class              | Line graph                                                                          |
 
 ### Table
-| wave | Avg Killed | Avg Missed | Avg Spent | Avg Archer | Avg Magic | Avg Slow | Avg Time(s) |
+| Wave | Avg Killed | Avg Missed | Avg Spent | Avg Archer | Avg Magic | Avg Slow | Avg Time(s) |
 |------|------------|------------|-----------|------------|-----------|----------|-------------|
 | 1    |            |            |           |            |           |          |             |
 

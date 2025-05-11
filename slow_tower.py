@@ -20,7 +20,6 @@ class SlowTower(Tower):
         self.y = (self.tile_y - 2.5) * (Config.get("TILE_SIZE"))
         self.rect.center = (self.x, self.y)
 
-        self.level = 1
         self.range = TowerData.Slow_Upgrade[self.level - 1].get("range")
         self.buy_cost = 300
         self.upgrade_cost = TowerData.Slow_Upgrade[self.level].get("upgrade_cost")

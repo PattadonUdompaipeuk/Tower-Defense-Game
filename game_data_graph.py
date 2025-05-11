@@ -63,6 +63,18 @@ class GameDataGraphs:
             .round(2)
             .reset_index()
         )
+
+        summary = summary.rename(columns={
+            "wave": "Wave",
+            "killed_enemies": "Avg Killed",
+            "missed_enemies": "Avg Missed",
+            "money_spent": "Avg Spent",
+            "archer": "Avg Archer",
+            "magic": "Avg Magic",
+            "slow": "Avg Slow",
+            "time_spent_per_wave(s)": "Avg Time (s)"
+        })
+
         return summary
 
     def create_summary_view(self, container):

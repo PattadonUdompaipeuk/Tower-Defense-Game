@@ -16,7 +16,6 @@ class MagicTower(Tower):
         self.name = "Magic Tower"
         self.type = "Magic"
 
-        self.level = 1
         self.range = TowerData.Magic_Upgrade[self.level - 1].get("range")
         self.buy_cost = 250
         self.upgrade_cost = TowerData.Magic_Upgrade[self.level].get("upgrade_cost")

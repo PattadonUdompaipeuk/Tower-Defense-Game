@@ -16,11 +16,10 @@ class ArcherTower(Tower):
         self.name = "Archer Tower"
         self.type = "Archer"
 
-        self.__level = 1
-        self.range = TowerData.Archer_Upgrade[self.__level - 1].get("range")
+        self.range = TowerData.Archer_Upgrade[self.level - 1].get("range")
         self.buy_cost = 200
-        self.upgrade_cost = TowerData.Archer_Upgrade[self.__level].get("upgrade_cost")
-        self.sell_cost = TowerData.Archer_Upgrade[self.__level - 1].get("sell_cost")
+        self.upgrade_cost = TowerData.Archer_Upgrade[self.level].get("upgrade_cost")
+        self.sell_cost = TowerData.Archer_Upgrade[self.level - 1].get("sell_cost")
 
         self.range_image = pg.Surface((self.range * 2, self.range * 2))
         self.range_image.fill((0, 0, 0))

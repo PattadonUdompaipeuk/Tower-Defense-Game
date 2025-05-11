@@ -1,4 +1,3 @@
-import pygame as pg
 import random
 from enemy_data import Enemy_data
 from config import Config

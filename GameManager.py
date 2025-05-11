@@ -232,7 +232,8 @@ class GameManager:
 
     def run(self):
         while self.__running:
-            if self.__game_start is False:
+
+            if not self.__game_start:
                 for ev in pg.event.get():
                     if ev.type == pg.QUIT:
                         self.__running = False
@@ -240,6 +241,10 @@ class GameManager:
                     self.__game_start = True
                 if self.__data_stat_button.draw(self.__screen):
                     run_frame()
+                    pg.event.clear()
+                    while pg.mouse.get_pressed()[0]:
+                        pg.event.pump()
+                        pg.time.wait(10)
                 self.__screen.blit(self.__game_start_img, (0, 0))
                 self.__ui.draw_text("TOWER DEFENSE", self.__ui.big_font, Config.get("BLACK"), 600, 150, self.__screen)
                 self.__ui.draw_text("PLAY", self.__big_font, Config.get("WHITE"), 600, 400, self.__screen)

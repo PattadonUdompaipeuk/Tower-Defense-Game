@@ -17,7 +17,7 @@ class Tower(pg.sprite.Sprite):
         self.__rect.center = (self.__x, self.__y)
 
         self.__target = None
-        self.__level = 1
+        self.level = 1
         self.__range = 0
         self.__buy_cost = 0
         self.__upgrade_cost = 0
@@ -134,7 +134,6 @@ class Tower(pg.sprite.Sprite):
     @range_rect.setter
     def range_rect(self, value):
         self.__range_rect = value
-
 
     @property
     def buy_cost(self):

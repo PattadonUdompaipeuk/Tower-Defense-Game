@@ -21,8 +21,6 @@ If too many enemies reach the base, the player loses.
 ## 3.3 Algorithms Involved
 Waypoint Navigation: Enemies follow a predefined path.
 <br>
-Collision Detection: Towers’ projectiles detect enemy hits.
-<br>
 Wave System: Dynamically increases difficulty over time.
 <br>
 

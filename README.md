@@ -39,3 +39,5 @@ python3 GameManager.py
 - Near the UNIT MANAGER bar you are able to see amount of money and base health you have.
 - You can look the Tower info that you place by click on them it will appear at bottom-right of the screen, You can upgrade or sell the tower there.
 - To restart : Press R
+# References
+- [REFERENCES.md](./REFERENCES.md)
